@@ -74,15 +74,21 @@ const ConfirmBookingSchema = z.object({
 
 // Basic prompt-safe helper
 function sayGather(twiml, text) {
+  const base = process.env.PUBLIC_BASE_URL || "";
+  const actionUrl = `${base}/call/input`;
+
   const gather = twiml.gather({
     input: "speech",
     speechTimeout: "auto",
-    action: "/call/input",
+    action: actionUrl,
     method: "POST",
   });
+
   gather.say({ voice: "alice", language: "en-GB" }, ensurePoundsOnly(text));
-  twiml.redirect({ method: "POST" }, "/call/input");
+
+  twiml.redirect({ method: "POST" }, actionUrl);
 }
+
 
 app.post("/call/start", (req, res) => {
   const callSid = req.body.CallSid;
